@@ -1,0 +1,21 @@
+# User credentials, account selection, runtime state, and logs.
+config/
+data/
+logs/
+千川接口.txt
+账户ID.txt
+项目名称.txt
+
+# Local build and test artifacts.
+_software_build*/
+_software_dist*/
+build/
+dist/
+*.spec
+.pytest_cache/
+__pycache__/
+*.py[cod]
+
+# Local recovery files.
+*.bak
+*.bad
