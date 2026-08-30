@@ -5,6 +5,9 @@ logs/
 千川接口.txt
 账户ID.txt
 项目名称.txt
+release_template/千川接口.txt
+release_template/账户ID.txt
+release_template/项目名称.txt
 
 # Local build and test artifacts.
 _software_build*/
