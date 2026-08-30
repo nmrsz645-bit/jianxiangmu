@@ -1,12 +1,12 @@
 # 交接说明：建项目监控
 
-最后更新：2026-08-30。此文件用于让新的 Codex 会话脱离聊天历史继续工作。
+最后更新：2026-08-31。此文件用于让新的 Codex 会话脱离聊天历史继续工作。
 
 ## 当前交接基线
 
 - Git 仓库：`https://github.com/nmrsz645-bit/jianxiangmu.git`；工作分支：`main`。
-- 交接基线提交：`864bb9a`（“添加自动化测试工作流”）。后续接手前先运行 `git log -1 --oneline`，以实际输出为准。
-- 最后一次本地自动化测试：`python -m pytest -q`，结果为 `37 passed`。
+- 交接基线：以 `main` 的当前 `HEAD` 与 `origin/main` 为准；接手前必须运行 `git status --short --branch` 和 `git log -1 --oneline`。
+- 最后一次本地自动化测试：`python -m pytest -q`，结果为 `38 passed`。
 - 远端自动化测试：`.github/workflows/tests.yml` 已随仓库提交；推送到 `main` 或提交 Pull Request 时，GitHub Actions 会在 Windows + Python 3.13 上运行测试。
 - 本交接只包含代码与说明；授权、账户 ID、令牌、用户配置、运行状态和日志均不在 Git 中，且不得通过 Git 迁移。
 
@@ -22,20 +22,21 @@
 
 ## 已完成并验证
 
-- Git 仓库已初始化并推送：`https://github.com/nmrsz645-bit/jianxiangmu.git`，分支 `main`，当前提交 `5a4550a`（“移交当前开发进度”）。
+- Git 仓库已初始化并推送：`https://github.com/nmrsz645-bit/jianxiangmu.git`，分支 `main`。
 - 已加入 `.gitignore`，授权、账户、运行状态、日志和本地构建产物均不提交。
 - 已新增 `README.md`、`AGENTS.md`、`requirements-dev.txt`。
 - 已新增 GitHub Actions 工作流 `.github/workflows/tests.yml`：每次推送到 `main` 或提交 Pull Request 时，使用 Windows + Python 3.13 自动执行 `python -m pytest -q`。
 - 源码默认扫描间隔为 600 秒（10 分钟），位置：`app/project_monitor.py` 中的 `DEFAULT_INTERVAL_SECONDS`。
-- 已运行 `python -m pytest -q`，结果：`37 passed`。
+- 已运行 `python -m pytest -q`，结果：`38 passed`。
+- 已修复失败队列容错：`data/failure_queue.json` 为空、JSON 损坏或内容不是数组时，程序会将原文件改名为带时间戳的 `.bad` 备份并初始化空队列，不再因该文件直接崩溃；对应测试已通过。
+- 已新增 `scripts/build_desktop_release.ps1` 并做过一次真实构建验证。候选包包含 `建项目监控\建项目监控.exe`、`建项目监控\_internal\`、`scripts\`、`使用说明.txt` 和 `version.json`，不包含用户授权或运行数据。
 - 当前发布版可执行文件曾在 `E:\自动化\建项目_软件版_20260719_004450\建项目监控.exe` 验证，构建时间为 2026-07-24；该文件与 `E:\自动化\建项目\_software_dist_10min_20260724\建项目监控\建项目监控.exe` 哈希一致。
 - 已知云端发布包位置：`E:\自动化\gengxin\releases\packages\jian-xiang-mu-2.0.4.zip`。不在本次交接中重新发布或覆盖它。
 
 ## 未完成事项
 
-1. **失败队列容错**：当 `data/failure_queue.json` 为空或 JSON 损坏时，程序当前会因 `JSONDecodeError` 弹出崩溃窗口。应改为先将坏文件备份为带时间戳的 `.bad` 文件，再自动初始化空队列并继续运行。
-2. **版本一致性核查**：`release_template/version.json` 当前为 `2.0.1`，但用户实际安装界面曾显示 `v2.0.5`。在任何构建、发布或云端更新前必须先确认哪个代码目录对应 `2.0.5`，避免将旧源码重新发布为新版。
-3. **云端更新验证**：云端更新机制由另一会话维护。更新必须只替换程序和依赖，不得覆盖用户数据；需要一次真实的“旧版更新到新版”验证并回读用户文件。
+1. **版本一致性核查**：`release_template/version.json` 当前为 `2.0.1`，但用户实际安装界面曾显示 `v2.0.5`。在任何构建、发布或云端更新前必须先确认哪个代码目录对应 `2.0.5`，避免将旧源码重新发布为新版。
+2. **云端更新验证**：云端更新机制由另一会话维护。更新必须只替换程序和依赖，不得覆盖用户数据；需要一次真实的“旧版更新到新版”验证并回读用户文件。
 
 ## 下一步具体操作
 
@@ -60,6 +61,7 @@ Get-Content .\release_template\version.json -Raw
 - 授权导入：`scripts/import_qianchuan_auth.ps1`
 - 账户/API 探测：`scripts/probe_qianchuan.ps1`
 - 守护进程：`scripts/watchdog.bat`、`scripts/watchdog_loop.bat`
+- 桌面包构建：`scripts/build_desktop_release.ps1`
 - Windows 启动入口：`启动项目监控.bat`、`守护启动.bat`、`导入授权.bat`
 - 发布模板：`release_template/`
 - 当前源码目录：`E:\自动化\建项目`
@@ -75,16 +77,19 @@ python -m pytest -q
 # 本地启动桌面程序
 python app\manager_gui.py
 
+# 构建候选桌面包（不发布）
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\build_desktop_release.ps1
+
 # Git 检查
 git status --short --branch
 git log -1 --oneline
 ```
 
-桌面版使用 PyInstaller 打包；`_software_build*` 和 `_software_dist*` 是本机构建/输出目录，不是唯一发布物。发布前在新目录构建、验证后再交给云端更新流程。
+桌面版使用 PyInstaller 打包；`_software_build*` 和 `_software_dist*` 是历史本机构建/输出目录，不是唯一发布物。新构建请使用 `scripts/build_desktop_release.ps1`，交付时必须复制生成目录的全部内容，不得只复制 EXE。发布前在新目录构建、验证后再交给云端更新流程。
 
 ## 已知问题与运行事实
 
-- 失败队列文件损坏会导致程序启动崩溃，详见“未完成事项 1”。短期人工恢复方式：关闭程序，将 `data/failure_queue.json` 改名为 `failure_queue.json.bak` 后重启；不要改动 `tokens.json`。
+- 失败队列文件损坏会自动备份为 `.bad` 并重建空队列；不要手动改动 `tokens.json`。
 - 千川账户达到 30 个项目上限时，接口拒绝创建项目。这是当前接受的业务限制，不做自动删除、自动绕过或额外优化；需要继续创建时由用户自行处理账户中的旧项目。
 - 常规扫描是每 10 分钟；失败队列存在时重试可能早于 10 分钟。
 - 任何旧验证目录、旧构建输出或云端发布目录都可能被用于回滚。未确认云端更新机制前不要清理它们。

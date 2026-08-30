@@ -16,3 +16,4 @@ jobs:
           python-version: '3.13'
       - run: python -m pip install -r requirements-dev.txt
       - run: python -m pytest -q
+      - run: powershell -NoProfile -ExecutionPolicy Bypass -File scripts\build_desktop_release.ps1 -OutputDir "$env:RUNNER_TEMP\release"

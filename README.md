@@ -35,3 +35,11 @@ python app\manager_gui.py
 ## 发布
 
 桌面包由 PyInstaller 生成。构建产物不提交 Git；发布前在干净目录构建并验证。云端更新只能替换程序文件与依赖，必须保留用户数据目录和根目录用户配置文件。
+
+在已安装 Python 3.13 和开发依赖的电脑上生成候选桌面包：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\build_desktop_release.ps1
+```
+
+输出目录为 `release\建项目监控-<版本号>`。交付给新电脑时必须复制整个目录，包含 `建项目监控\_internal\` 和 `scripts\`；不要携带原电脑的 `config/`、`data/`、`logs/` 或根目录授权文本。新电脑首次打开后，在“授权配置”和“账户与项目”中自行填写信息。

@@ -145,7 +145,21 @@ def load_failure_queue(base_dir):
     path = failure_queue_path(base_dir)
     if not path.exists():
         return []
-    return read_json(path)
+    try:
+        queue = read_json(path)
+        if not isinstance(queue, list):
+            raise ValueError("failure queue must be a list")
+        return queue
+    except (json.JSONDecodeError, UnicodeDecodeError, ValueError) as exc:
+        stamp = datetime.now().strftime("%Y%m%d%H%M%S%f")
+        backup = path.with_name(f"{path.stem}.{stamp}.bad")
+        try:
+            path.replace(backup)
+            write_json(path, [])
+            logging.warning("recovered corrupt failure queue backup=%s error=%s", backup, exc)
+        except OSError as backup_exc:
+            logging.error("failed to recover corrupt failure queue path=%s error=%s", path, backup_exc)
+        return []
 
 
 def save_failure_queue(base_dir, queue):

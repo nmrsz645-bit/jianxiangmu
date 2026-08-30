@@ -19,6 +19,7 @@ from app.project_monitor import (
     is_retryable_url_error,
     latest_promotion,
     keep_direct_account_failures,
+    load_failure_queue,
     next_project_name,
     read_account_id_file,
     retry_failed_task,
@@ -30,6 +31,18 @@ from app.project_monitor import (
 
 
 class ProjectMonitorTests(unittest.TestCase):
+    def test_load_failure_queue_recovers_invalid_json(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            base_dir = Path(temp_dir)
+            data_dir = base_dir / "data"
+            data_dir.mkdir()
+            path = data_dir / "failure_queue.json"
+            path.write_text("{", encoding="utf-8")
+
+            self.assertEqual(load_failure_queue(base_dir), [])
+            self.assertEqual(json.loads(path.read_text(encoding="utf-8")), [])
+            self.assertEqual(len(list(data_dir.glob("failure_queue.*.bad"))), 1)
+
     def test_next_project_name_increments_suffix(self):
         self.assertEqual(next_project_name("project[2]_1"), "project[2]_2")
         self.assertEqual(next_project_name("project[2]"), "project[2]_1")

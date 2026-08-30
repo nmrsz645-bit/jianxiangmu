@@ -11,6 +11,7 @@ _software_build*/
 _software_dist*/
 build/
 dist/
+release/
 *.spec
 .pytest_cache/
 __pycache__/
