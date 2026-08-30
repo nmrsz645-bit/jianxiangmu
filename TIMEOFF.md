@@ -11,6 +11,7 @@
 - Git 仓库已初始化并推送：`https://github.com/nmrsz645-bit/jianxiangmu.git`，分支 `main`，当前提交 `5a4550a`（“移交当前开发进度”）。
 - 已加入 `.gitignore`，授权、账户、运行状态、日志和本地构建产物均不提交。
 - 已新增 `README.md`、`AGENTS.md`、`requirements-dev.txt`。
+- 已新增 GitHub Actions 工作流 `.github/workflows/tests.yml`：每次推送到 `main` 或提交 Pull Request 时，使用 Windows + Python 3.13 自动执行 `python -m pytest -q`。
 - 源码默认扫描间隔为 600 秒（10 分钟），位置：`app/project_monitor.py` 中的 `DEFAULT_INTERVAL_SECONDS`。
 - 已运行 `python -m pytest -q`，结果：`37 passed`。
 - 当前发布版可执行文件曾在 `E:\自动化\建项目_软件版_20260719_004450\建项目监控.exe` 验证，构建时间为 2026-07-24；该文件与 `E:\自动化\建项目\_software_dist_10min_20260724\建项目监控\建项目监控.exe` 哈希一致。

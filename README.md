@@ -11,6 +11,8 @@ python -m pip install -r requirements-dev.txt
 python -m pytest -q
 ```
 
+推送到 `main` 或创建 Pull Request 时，GitHub Actions 会在 Windows + Python 3.13 环境自动执行同一套测试。
+
 本地运行桌面程序：
 
 ```powershell
