@@ -75,9 +75,9 @@ gh release create v<version> .\release\建项目监控-<version>.zip --repo nmrs
 
 本仓库不包含网站静态 `index.html`、下载卡片 ID、运行时 catalog/manifest 字段，因而不能在这里配置或验证下载站映射。也不要据此推断存在 OSS bucket/key 或自动更新端点。
 
-共享网站由另一个会话维护；其通用发布指南的预定地址是 [PUBLISHING.md](https://github.com/nmrsz645-bit/software-download-center/blob/docs-cross-pc-handoff/docs/PUBLISHING.md)，其中的相关锚点为 `#website`、`#catalog`、`#client-update`、`#verify-rollback` 与 `#credentials`。本轮只读核验时，该指定分支在 GitHub 返回 404，故没有确认任何建项目监控卡片 ID、index 字段或外部 catalog 对象。网站维护会话完成并使链接可读前，不得把本项目的 GitHub Release 假定为已出现在下载站。
+共享网站由另一个会话维护；其通用发布指南已在 [PUBLISHING.md](https://github.com/nmrsz645-bit/software-download-center/blob/docs-cross-pc-handoff/docs/PUBLISHING.md) 的 `docs-cross-pc-handoff` 分支核验可读，相关锚点为 `#website`、`#catalog`、`#client-update`、`#verify-rollback` 与 `#credentials`。该分支当前含静态 `index.html`、`CNAME`、该指南和一个与本项目无关的更新专用目录；没有可供本项目复用的统一 catalog。
 
-如果将来该网站分支可用，网站维护者仍须按其指南单独把本项目的版本、GitHub Release 下载地址与 SHA-256 映射到网站；本项目仓库不提供该动作的脚本或凭据。本轮未修改网站仓库、OSS、catalog 或生产下载页。
+本轮在该分支的 `index.html` 中未找到建项目监控、`jianxiangmu` 或 `jian-xiang-mu` 映射，因此当前没有本项目下载卡片 ID、卡片字段、运行时 manifest 字段或网站侧更新对象可填写。网站维护者将来必须按其指南在实际读取的位置单独添加本项目版本、GitHub Release 下载地址与 SHA-256；本项目仓库不提供该动作的脚本或凭据。在该映射实际提交并验证前，不得把本项目 GitHub Release 假定为已出现在下载站。本轮未修改网站仓库、OSS、catalog 或生产下载页。
 
 ## 6. 发布后验证、手工升级与回滚
 
@@ -101,6 +101,6 @@ Get-FileHash .\jianxiangmu-monitor-<version>-windows.zip -Algorithm SHA256
 
 - 没有自动更新、增量包、manifest、OSS/cdn 发布脚本或可验证的网站卡片配置。
 - 本轮没有执行任何生产上传命令、OSS 操作、网站修改或线上更新清单修改。
-- 当前共享网站指南链接的指定分支返回 404；其字段、catalog 和卡片映射未验证。
+- 共享网站通用指南已可读，但 `index.html` 中尚无本项目映射；卡片字段、catalog 和客户端更新对象均不存在且未验证。
 - 本项目未在真实授权下做端到端扫描/创建验证；Release GUI 只能在无授权隔离环境进行受控启动检查。
 - EXE 尚未使用商业代码签名，Windows 可能显示 SmartScreen 提示；不得通过关闭系统防护规避。
