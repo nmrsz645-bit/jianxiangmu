@@ -2,6 +2,8 @@
 
 本文档对应 `v2.0.6` 发布线。权威代码版本由 `main` 与 `v2.0.6` tag 指向的提交决定；接手时先运行 `git fetch --tags origin`、`git status --short --branch` 和 `git show --no-patch v2.0.6`，不要仅凭 EXE 修改时间或目录名称判断版本。
 
+新 Windows 接手、构建、GitHub Release、手工升级与网站发布边界的操作说明见 [docs/RELEASE-GUIDE.md](docs/RELEASE-GUIDE.md)。
+
 ## 1. 用途、边界与架构
 
 这是 Windows 本地 Tkinter 桌面程序，不是云服务。它读取当前电脑上由使用者自行导入的千川授权，扫描目标账户的项目和单元；最高 `_数字` 尾缀项目达到默认阈值 88 时，创建下一个项目并复制源项目最新单元。

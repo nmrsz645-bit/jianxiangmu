@@ -4,6 +4,8 @@
 
 当前发布版本：`2.0.6`。安装包与校验值见 [GitHub Releases](../../releases)。面向维护者的完整交接信息见 [HANDOFF.md](HANDOFF.md)。
 
+新 Windows 接手、版本构建、GitHub Release、手工升级和网站边界见 [docs/RELEASE-GUIDE.md](docs/RELEASE-GUIDE.md)。
+
 ## 安装与首次启动
 
 1. 从与版本号相符的 GitHub Release 下载 `建项目监控-2.0.6.zip`。
