@@ -7,9 +7,9 @@ from app.manager_gui import auth_import_succeeded, auth_is_ready, clear_scan_cac
 
 class ManagerGuiTests(unittest.TestCase):
     def test_extract_settings_supports_line_below_values(self):
-        text = "APP_ID\n1869982152668187\nSecret\nabc1234567890123\n"
-        self.assertEqual(extract_setting(text, "APP_ID"), "1869982152668187")
-        self.assertEqual(extract_setting(text, "Secret"), "abc1234567890123")
+        text = "APP_ID\ntest-app-id\nSecret\ntest-secret-value\n"
+        self.assertEqual(extract_setting(text, "APP_ID"), "test-app-id")
+        self.assertEqual(extract_setting(text, "Secret"), "test-secret-value")
 
     def test_extract_callback_uses_full_url(self):
         text = "callback_url: https://example.com/?app_id=1&auth_code=abc&scope=x"
@@ -18,9 +18,9 @@ class ManagerGuiTests(unittest.TestCase):
     def test_save_interface_and_account_ids(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             base = Path(temp_dir)
-            save_interface_settings(base, "1869982152668187", "a" * 32, "https://example.com/?auth_code=abc")
-            ids = save_account_ids(base, "1234567890\n1234567890\n9876543210")
-            self.assertEqual(ids, ["1234567890", "9876543210"])
+            save_interface_settings(base, "0000000000", "a" * 32, "https://example.com/?auth_code=abc")
+            ids = save_account_ids(base, "0000000000\n0000000000\n0000000001")
+            self.assertEqual(ids, ["0000000000", "0000000001"])
             self.assertEqual(load_account_ids(base), ids)
             self.assertIn("APP_ID", (base / "千川接口.txt").read_text(encoding="utf-8"))
 

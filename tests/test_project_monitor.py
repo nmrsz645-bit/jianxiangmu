@@ -31,6 +31,15 @@ from app.project_monitor import (
 
 
 class ProjectMonitorTests(unittest.TestCase):
+    def test_root_accounts_does_not_include_an_embedded_account_id(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            client = QianchuanClient.__new__(QianchuanClient)
+            client.base_dir = Path(temp_dir)
+            client.config = {}
+            client.tokens = {}
+
+            self.assertEqual(client.root_accounts(), [])
+
     def test_load_failure_queue_recovers_invalid_json(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             base_dir = Path(temp_dir)
@@ -109,13 +118,13 @@ class ProjectMonitorTests(unittest.TestCase):
         response = {
             "data": {
                 "accounts": [
-                    {"account_id": 1869328458020864, "account_name": "ZK-11", "account_type": "AD"}
+                    {"account_id": "0000000000", "account_name": "test-account", "account_type": "AD"}
                 ]
             }
         }
         self.assertEqual(
             extract_customer_center_accounts(response),
-            [{"advertiser_id": "1869328458020864", "name": "ZK-11"}],
+            [{"advertiser_id": "0000000000", "name": "test-account"}],
         )
 
     def test_latest_promotion_uses_create_time(self):
@@ -134,7 +143,7 @@ class ProjectMonitorTests(unittest.TestCase):
             "promotion_create_time": "2026-07-04 13:14:04",
             "opt_status": "DISABLE",
             "is_comment_disable": "ON",
-            "native_setting": {"aweme_id": "89334594253", "is_feed_and_fav_see": "ON"},
+            "native_setting": {"aweme_id": "test-aweme-id", "is_feed_and_fav_see": "ON"},
             "promotion_materials": {"video_material_list": [{"video_id": "v1"}]},
             "source": "source",
         }
@@ -261,13 +270,13 @@ class ProjectMonitorTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             base = Path(temp_dir)
             (base / "账户ID.txt").write_text(
-                "1764073167595592\n1869407725856841, 1869328450104332\nabc\n",
+                "0000000000\n0000000001, 0000000002\nabc\n",
                 encoding="utf-8",
             )
 
             ids = read_account_id_file(base)
 
-        self.assertEqual(ids, ["1764073167595592", "1869407725856841", "1869328450104332"])
+        self.assertEqual(ids, ["0000000000", "0000000001", "0000000002"])
 
     def test_manual_account_ids_are_a_strict_direct_allowlist(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -288,11 +297,11 @@ class ProjectMonitorTests(unittest.TestCase):
                     return []
 
             with patch("app.project_monitor.QianchuanClient", FakeClient), patch(
-                "app.project_monitor.read_account_id_file", return_value=["1000000001", "1000000002", "1000000003"]
+                "app.project_monitor.read_account_id_file", return_value=["0000000000", "0000000001", "0000000002"]
             ):
                 run_once(base)
 
-        self.assertEqual(FakeClient.listed, ["1000000001", "1000000002", "1000000003"])
+        self.assertEqual(FakeClient.listed, ["0000000000", "0000000001", "0000000002"])
 
     def test_direct_mode_removes_old_discovery_failures(self):
         queue = [

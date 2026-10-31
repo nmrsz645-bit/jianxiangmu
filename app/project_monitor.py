@@ -13,7 +13,6 @@ from pathlib import Path
 
 
 API = "https://api.oceanengine.com"
-DEFAULT_ROOT_ACCOUNT = "1861246396475463"
 DEFAULT_THRESHOLD = 88
 DEFAULT_INTERVAL_SECONDS = 600
 FAILURE_RETRY_SECONDS = 180
@@ -372,7 +371,10 @@ def retry_failed_task(client, task):
     stage = task.get("stage")
     advertiser_id = str(task.get("advertiser_id") or "")
     if stage == "discover_accounts":
-        accounts = client.discover_ad_accounts(task.get("root_account") or DEFAULT_ROOT_ACCOUNT)
+        root_account = str(task.get("root_account") or "").strip()
+        if not root_account:
+            raise RuntimeError("missing root account for discovery retry")
+        accounts = client.discover_ad_accounts(root_account)
         return {"discovered_accounts": len(accounts)}
     if stage == "scan_account":
         projects = client.list_projects(advertiser_id)
@@ -485,7 +487,6 @@ class QianchuanClient:
             if self.config.get(key):
                 roots.append(self.config[key])
         roots.extend(self.tokens.get("advertiser_ids") or [])
-        roots.append(DEFAULT_ROOT_ACCOUNT)
 
         seen = set()
         out = []
@@ -541,7 +542,10 @@ class QianchuanClient:
                 logging.warning("retryable request error attempt=%s path=%s error=%s", attempt + 1, path, exc)
                 time.sleep(3 * (attempt + 1))
 
-    def discover_ad_accounts(self, root_account=DEFAULT_ROOT_ACCOUNT):
+    def discover_ad_accounts(self, root_account):
+        root_account = str(root_account or "").strip()
+        if not root_account:
+            raise ValueError("root account is required for account discovery")
         result = self.request(
             "GET",
             "/open_api/v3.0/customer_center/account/list/",
